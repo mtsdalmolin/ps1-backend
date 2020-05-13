@@ -6,7 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node ace test"
+    "test": "node ace test",
+    "heroku-prebuild": "ENV_SILENT=true npm i --production && node ace migration:run --force && node ace seed --force && pm2 restart app",
+    "heroku-postbuild": "ENV_SILENT=true npm start"
   },
   "keywords": [
     "adonisjs",
@@ -27,7 +29,8 @@
     "adonis-acl": "^1.1.1",
     "crc-32": "^1.2.0",
     "crypto-js": "^4.0.0",
-    "pg": "^8.1.0"
+    "pg": "^8.1.0",
+    "url-parse": "^1.4.7"
   },
   "devDependencies": {},
   "autoload": {
