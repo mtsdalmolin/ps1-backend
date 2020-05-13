@@ -6,9 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node ace test",
-    "heroku-prebuild": "ENV_SILENT=true npm i --production && ENV_SILENT=true node ace migration:run --force && ENV_SILENT=true node ace seed --force",
-    "heroku-postbuild": "ENV_SILENT=true npm start"
+    "test": "node ace test"
   },
   "keywords": [
     "adonisjs",
