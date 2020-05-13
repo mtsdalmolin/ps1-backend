@@ -17,7 +17,10 @@
 const Route = use('Route')
 
 Route.get('/', () => {
-  return { greeting: 'Hello world in JSON' }
+  return { 
+    title: 'Sistema de gerenciamento de patrimonios escolares [API Rest]',
+    description: 'API Rest desenvolvida para o projeto final da disciplina de Projeto de Software 1' 
+  }
 })
 
 // Rota de cadastro de usuário
