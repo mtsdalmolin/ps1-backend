@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "node ace test",
-    "heroku-prebuild": "ENV_SILENT=true npm i --production && node ace migration:run --force && node ace seed --force && pm2 restart app",
+    "heroku-prebuild": "ENV_SILENT=true npm i --production && ENV_SILENT=true node ace migration:run --force && ENV_SILENT=true node ace seed --force && ENV_SILENT=true pm2 restart app",
     "heroku-postbuild": "ENV_SILENT=true npm start"
   },
   "keywords": [
