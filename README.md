@@ -1,4 +1,5 @@
-# API Rests repo of the project developed in the software design subject
+# ps1-backend
+API Rests repo of the project developed in the software design subject
 
 ### Routes
 | Route        | Verb(s)   | Handler                  | Middleware      | Name            |
