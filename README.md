@@ -24,11 +24,12 @@ API Rests repo of the project developed in the software design subject
 - [x] Users-Schools relationship (n-n)
 - [x] School-Address relationship (1-1)
 - [ ] Classroom CRUD
-- [ ] School-Address relationship (1-n)
+- [ ] School-Classroom relationship (1-n)
 - [ ] Ticket CRUD
 - [ ] School-Tickets relationship (1-n)
 - [ ] User-Tickets relationship (1-n)
 - [ ] Historic CRUD (Associative class between entities School and Ticket)
+- [ ] School-Address relationship (1-n)
 - [x] Deploy
 
 ## Authors
