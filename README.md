@@ -16,6 +16,11 @@ API Rests repo of the project developed in the software design subject
 | /schools/:id | PUT,PATCH | SchoolController.update  | auth,is:(admin) | schools.update  |
 | /schools/:id | DELETE    | SchoolController.destroy | auth,is:(admin) | schools.destroy |
 | /sessions    | POST      | SessionController.create |                 | /sessions       |
+| /classrooms  | HEAD,GET  | ClassroomController.index      |  auth,is:(admin)   | classrooms.index  |
+| /classrooms  | POST      | ClassroomController.store      |  auth,is:(admin)   | classrooms.store  |
+| /classrooms/:id | HEAD,GET  | ClassroomController.show    |  auth,is:(admin)   | classrooms.show  |
+| /classrooms/:id | PUT,PATCH | ClassroomController.update  |  auth,is:(admin)   | classrooms.update  |
+| /classrooms/:id | DELETE    | ClassroomController.destroy |  auth,is:(admin)   | classrooms.destroy  |
 
 ### TODO[DONE] List
 - [x] Users CRUD
@@ -23,8 +28,8 @@ API Rests repo of the project developed in the software design subject
 - [x] Schools CRUD
 - [x] Users-Schools relationship (n-n)
 - [x] School-Address relationship (1-1)
-- [ ] Classroom CRUD
-- [ ] School-Classroom relationship (1-n)
+- [x] Classroom CRUD
+- [x] School-Classroom relationship (1-n)
 - [ ] Ticket CRUD
 - [ ] School-Tickets relationship (1-n)
 - [ ] User-Tickets relationship (1-n)
