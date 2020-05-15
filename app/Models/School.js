@@ -13,6 +13,11 @@ class School extends Model {
   address () {
     return this.hasOne('App/Models/Address')
   }
+
+  classrooms () {
+    return this
+      .hasMany('App/Models/Classroom')
+  }
 }
 
 module.exports = School

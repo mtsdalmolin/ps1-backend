@@ -36,6 +36,10 @@ Route.group(() => {
     .except(['store', 'update']),
   Route.resource('schools', 'SchoolController')
     .apiOnly()
+  Route.resource('user_schools', 'UserSchoolController')
+    .apiOnly()
+  Route.resource('classrooms', 'ClassroomController')
+    .apiOnly()
 }).middleware(['auth', 'is:(admin)'])
 
 Route.post('/sessions', 'SessionController.create')
