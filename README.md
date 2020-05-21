@@ -30,9 +30,9 @@ API Rests repo of the project developed in the software design subject
 - [x] School-Address relationship (1-1)
 - [x] Classroom CRUD
 - [x] School-Classroom relationship (1-n)
-- [ ] Ticket CRUD
-- [ ] School-Tickets relationship (1-n)
-- [ ] User-Tickets relationship (1-n)
+- [x] Ticket CRUD
+- [x] School-Tickets relationship (1-n)
+- [x] User-Tickets relationship (1-n)
 - [ ] Historic CRUD (Associative class between entities School and Ticket)
 - [ ] School-Address relationship (1-n)
 - [x] Deploy

@@ -8,6 +8,12 @@ class Classroom extends Model {
         return this
           .belongsTo('App/Models/School')
     }
+
+    tickets (){
+        return this
+          .hasMany('App/Models/Ticket')
+          .pivotTable('tickets')
+    }
 }
 
 module.exports = Classroom

@@ -40,6 +40,8 @@ Route.group(() => {
     .apiOnly()
   Route.resource('classrooms', 'ClassroomController')
     .apiOnly()
+  Route.resource('tickets', 'TicketController')
+    .apiOnly()
 }).middleware(['auth', 'is:(admin)'])
 
 Route.post('/sessions', 'SessionController.create')
