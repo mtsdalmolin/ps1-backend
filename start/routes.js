@@ -29,6 +29,10 @@ Route.post('/users', 'UserController.store')
 // Edição de usuário
 Route.put('/users/:id', 'UserController.update')
 
+// Rota cadastro de ticket
+Route.resource('tickets', 'TicketController')
+    .apiOnly()
+
 // Rotas autenticadas para admin
 Route.group(() => {
   Route.resource('users', 'UserController')
@@ -39,8 +43,6 @@ Route.group(() => {
   Route.resource('user_schools', 'UserSchoolController')
     .apiOnly()
   Route.resource('classrooms', 'ClassroomController')
-    .apiOnly()
-  Route.resource('tickets', 'TicketController')
     .apiOnly()
 }).middleware(['auth', 'is:(admin)'])
 

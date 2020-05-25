@@ -98,8 +98,15 @@ class TicketController {
    */
   async update ({ params, request, response }) {
     const ticket = await Ticket.findOrFail(params.id)
-    const data = {"situation": "Analisada"}
+    const data = request.only (['classroom_id', 'title', 'description'])
     
+    const classroom = await Classroom.find(data.classroom_id)
+
+    if (!classroom)
+      return response.status(404).json({
+        message: 'Classroom not found!'
+      })
+
     ticket.merge(data)
     await ticket.save()
     
