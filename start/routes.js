@@ -23,27 +23,38 @@ Route.get('/', () => {
   }
 })
 
+Route.post('/sessions', 'SessionController.create')
+
 // Rota de cadastro de usuário
 Route.post('/users', 'UserController.store')
 
-// Edição de usuário
-Route.put('/users/:id', 'UserController.update')
+// Rotas autenticadas para o usuário e/ou admin
+Route.group(() => {
+  // Edição de usuário
+  Route.put('/users/:id', 'UserController.update')
 
-// Rota cadastro de ticket
-Route.resource('tickets', 'TicketController')
-    .apiOnly()
+  // Rota cadastro de ticket
+  Route.post('/tickets/:userId', 'TicketController.store')
+  Route.get('/tickets/:userId', 'TicketController.index')
+  Route.get('/tickets/:userId/:id', 'TicketController.show')
+  Route.put('/tickets/:userId/:id', 'TicketController.update')
 
-// Rotas autenticadas para admin
+  Route.post('/ticket/:userId/:id/photos', 'PhotoController.store')
+  Route.get('/ticket/:userId/:id/photos', 'PhotoController.show')
+
+  Route.post('/user_schools', 'UserSchoolController.store')
+}).middleware(['auth'])
+
+// Rotas autenticadas apenas para admin
 Route.group(() => {
   Route.resource('users', 'UserController')
     .apiOnly()
-    .except(['store', 'update']),
+    .except(['store']),
   Route.resource('schools', 'SchoolController')
-    .apiOnly()
-  Route.resource('user_schools', 'UserSchoolController')
     .apiOnly()
   Route.resource('classrooms', 'ClassroomController')
     .apiOnly()
+  Route.resource('addresses', 'AddressController')
+    .apiOnly()
+    .only(['store', 'update', 'destroy'])
 }).middleware(['auth', 'is:(admin)'])
-
-Route.post('/sessions', 'SessionController.create')
