@@ -6,6 +6,7 @@
 
 const School = use('App/Models/School')
 const Classroom = use('App/Models/Classroom')
+const Slugify = use('slugify')
 
 /**
  * Resourceful controller for interacting with classrooms
@@ -20,10 +21,13 @@ class ClassroomController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const classrooms = Classroom.all()
+  async index ({ params, request, response, view }) {
+    const school = await School.findByOrFail('id_hash', params.schoolIdHash)
 
-    return classrooms
+    return await Classroom
+      .query()
+      .where('school_id', school.id)
+      .fetch()
   }
 
   /**
@@ -34,23 +38,19 @@ class ClassroomController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
-    const { id, identifier, school_id } = request.post()
-    const school = await School.find(school_id)
+  async store ({ params, request, response }) {
+    const { identifier } = request.post()
+    const school = await School.findByOrFail('id_hash', params.schoolIdHash)
 
-    if (!school)
-      return response.status(404).json({
-        message: 'School not found!'
-      })
+    const slug = Slugify(identifier, { lower: true })
 
-    const registration = await Classroom.create({ id, identifier, school_id })
+    const classroom = await Classroom.create({ identifier, slug, school_id: school.id })
 
-    response.status(201).json({
+    return response.status(201).json({
       success: true,
-      message: `Successfully registered classroom ${identifier} to ${school.social_reason}.`,
-      data: registration
+      message: `Sala de aula ${identifier} registrada em ${school.social_reason}.`,
+      data: classroom
     })
-
   }
 
   /**
@@ -63,9 +63,7 @@ class ClassroomController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const classroom = await Classroom.findOrFail(params.id)
-  
-    return classroom
+    return await Classroom.findByOrFail('slug', params.id)
   }
 
   /**
@@ -77,7 +75,7 @@ class ClassroomController {
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
-    const classroom = await Classroom.findOrFail(params.id);
+    const classroom = await Classroom.findByOrFail('slug', params.id);
     const data = request.only(["identifier"]);
     
     classroom.merge(data);
@@ -95,7 +93,7 @@ class ClassroomController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
-    const classroom = await Classroom.findOrFail(params.id)
+    const classroom = await Classroom.findByOrFail('slug', params.id)
 
     await classroom.delete()
   }
