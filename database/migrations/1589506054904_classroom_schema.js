@@ -7,7 +7,8 @@ class ClassroomSchema extends Schema {
   up () {
     this.create('classrooms', (table) => {
       table.increments()
-      table.string('identifier').notNullable().unique()
+      table.string('identifier').notNullable()
+      table.string('slug').notNullable()
       table
         .integer('school_id')
         .unsigned()
