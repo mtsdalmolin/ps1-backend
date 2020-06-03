@@ -25,10 +25,9 @@ class SchoolController {
   async index ({ request, response, view }) {
     try {
       const schools = await School.all()
-      let data = []
 
       return Promise.all(schools.rows.map(async school => {
-        const address = await Address.findByOrFail('school_id', school.$attributes.id)
+        const address = await Address.findBy('school_id', school.$attributes.id)
         
         return {
           school: { ...school.$attributes },
@@ -99,8 +98,8 @@ class SchoolController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const school = await School.findOrFail(params.id)
-    const address = await Address.findByOrFail('school_id', params.id)
+    const school = await School.findByOrFail('id_hash', params.id)
+    const address = await Address.findByOrFail('school_id', school.id)
 
     return response.json({
       school: {
@@ -133,9 +132,9 @@ class SchoolController {
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
-    const school = await School.findOrFail(params.id)
+    const school = await School.findByOrFail('id_hash', params.id)
     const schoolData = request.only(['social_reason'])
-    const address = await Address.findByOrFail('school_id', params.id)
+    const address = await Address.findByOrFail('school_id', school.id)
     const addressData = request.only(['street', 'number', 'complement'])
 
     const trx = await Database.beginTransaction()
@@ -175,7 +174,7 @@ class SchoolController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
-    const school = await School.findOrFail(params.id)
+    const school = await School.findByOrFail('id_hash', params.id)
     try {
       await school.delete()
       return response.json({
