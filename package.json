@@ -28,6 +28,7 @@
     "crc-32": "^1.2.0",
     "crypto-js": "^4.0.0",
     "pg": "^8.1.0",
+    "slugify": "^1.4.0",
     "url-parse": "^1.4.7"
   },
   "devDependencies": {},
