@@ -36,13 +36,15 @@ Route.group(() => {
   // Rota cadastro de ticket
   Route.post('/tickets/:userId', 'TicketController.store')
   Route.get('/tickets/:userId', 'TicketController.index')
-  Route.get('/tickets/:userId/:id', 'TicketController.show')
-  Route.put('/tickets/:userId/:id', 'TicketController.update')
+  Route.get('/tickets/:userId/:ticketId', 'TicketController.show')
+  Route.put('/tickets/:userId/:ticketId', 'TicketController.update')
 
-  Route.post('/ticket/:userId/:id/photos', 'PhotoController.store')
-  Route.get('/ticket/:userId/:id/photos', 'PhotoController.show')
+  Route.post('/tickets/:userId/:ticketId/photos', 'PhotoController.store')
+  Route.get('/tickets/:userId/:ticketId/photos', 'PhotoController.show')
 
   Route.post('/user_schools', 'UserSchoolController.store')
+
+  Route.get('/schools/:schoolIdHash/classrooms', 'ClassroomController.index')
 }).middleware(['auth'])
 
 // Rotas autenticadas apenas para admin
@@ -50,11 +52,21 @@ Route.group(() => {
   Route.resource('users', 'UserController')
     .apiOnly()
     .except(['store']),
+  
   Route.resource('schools', 'SchoolController')
     .apiOnly()
-  Route.resource('classrooms', 'ClassroomController')
-    .apiOnly()
-  Route.resource('addresses', 'AddressController')
-    .apiOnly()
-    .only(['store', 'update', 'destroy'])
 }).middleware(['auth', 'is:(admin)'])
+
+// Rotas filhas de escolas, pois é mais fácil relacionar as rotas dessa forma
+Route.group(() => {
+  Route.resource(':schoolIdHash/classrooms', 'ClassroomController')
+    .apiOnly()
+    .except(['index'])
+
+  // TODO: Fazer CRUD individual das rotas
+  Route.resource(':schoolIdHash/addresses', 'AddressController')
+  .apiOnly()
+    
+  Route.get(':schoolIdHash/users', 'UserSchoolController.show')
+}).middleware(['auth', 'is:(admin)'])
+  .prefix('schools')
