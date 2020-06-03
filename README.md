@@ -5,6 +5,7 @@ API Rests repo of the project developed in the software design subject
 | Route        | Verb(s)   | Handler                  | Middleware      | Name            |
 |--------------|-----------|--------------------------|-----------------|-----------------|
 | /            | HEAD,GET  | Closure                  |                 | /               |
+| /sessions    | POST      | SessionController.create |                 | /sessions       |
 | /users       | POST      | UserController.store     |                 | /users          |
 | /users/:id   | PUT       | UserController.update    |                 | /users/:id      |
 | /users       | HEAD,GET  | UserController.index     | auth,is:(admin) | users.index     |
@@ -15,12 +16,22 @@ API Rests repo of the project developed in the software design subject
 | /schools/:id | HEAD,GET  | SchoolController.show    | auth,is:(admin) | schools.show    |
 | /schools/:id | PUT,PATCH | SchoolController.update  | auth,is:(admin) | schools.update  |
 | /schools/:id | DELETE    | SchoolController.destroy | auth,is:(admin) | schools.destroy |
-| /sessions    | POST      | SessionController.create |                 | /sessions       |
 | /classrooms  | HEAD,GET  | ClassroomController.index      |  auth,is:(admin)   | classrooms.index  |
 | /classrooms  | POST      | ClassroomController.store      |  auth,is:(admin)   | classrooms.store  |
 | /classrooms/:id | HEAD,GET  | ClassroomController.show    |  auth,is:(admin)   | classrooms.show  |
 | /classrooms/:id | PUT,PATCH | ClassroomController.update  |  auth,is:(admin)   | classrooms.update  |
 | /classrooms/:id | DELETE    | ClassroomController.destroy |  auth,is:(admin)   | classrooms.destroy  |
+| /schools/:schoolIdHash/classrooms | HEAD,GET  | ClassroomController.index | auth | /schools/:schoolIdHash/classrooms |
+| /schools/:schoolIdHash/classrooms | POST      | ClassroomController.store | auth,is:(admin) | :schoolIdHash/classrooms.store |
+| /schools/:schoolIdHash/classrooms/:id | HEAD,GET  | ClassroomController.show | auth,is:(admin) | :schoolIdHash/classrooms.show |
+| /schools/:schoolIdHash/classrooms/:id | PUT,PATCH | ClassroomController.update  | auth,is:(admin) | :schoolIdHash/classrooms.update  |
+| /schools/:schoolIdHash/classrooms/:id | DELETE    | ClassroomController.destroy | auth,is:(admin) | :schoolIdHash/classrooms.destroy |
+| /schools/:schoolIdHash/addresses      | HEAD,GET  | AddressController.index     | auth,is:(admin) | :schoolIdHash/addresses.index    |
+| /schools/:schoolIdHash/addresses      | POST      | AddressController.store     | auth,is:(admin) | :schoolIdHash/addresses.store    |
+| /schools/:schoolIdHash/addresses/:id  | HEAD,GET  | AddressController.show      | auth,is:(admin) | :schoolIdHash/addresses.show     |
+| /schools/:schoolIdHash/addresses/:id  | PUT,PATCH | AddressController.update    | auth,is:(admin) | :schoolIdHash/addresses.update   |
+| /schools/:schoolIdHash/addresses/:id  | DELETE    | AddressController.destroy   | auth,is:(admin) | :schoolIdHash/addresses.destroy  |
+| /schools/:schoolIdHash/users          | HEAD,GET  | UserSchoolController.show   | auth,is:(admin) | /:schoolIdHash/users             |
 
 ### TODO[DONE] List
 - [x] Users CRUD
