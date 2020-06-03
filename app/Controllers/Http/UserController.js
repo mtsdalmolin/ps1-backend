@@ -17,11 +17,14 @@ class UserController {
     const trx = await Database.beginTransaction()
     try {
       const user = await User.create(data, trx)
-      
+
       if (type !== 'admin') {
         await trx.commit()
         return response.json(user)
       }
+
+      if (!data.password)
+        return response.badRequest('Senha é obrigatória!')
 
       const role = await Role.findByOrFail('slug', type, trx)
       await user.roles().attach([role.id], null, trx)
@@ -42,9 +45,9 @@ class UserController {
   async update ({ auth, params, request, response }) {
     const user = await User.findOrFail(params.id)
     
-    let loggedUser = await auth.getUser()
+    let roles = await auth.user.getRoles()
 
-    if (loggedUser.id !== user.id)
+    if (roles[0] !== 'admin' && auth.user.id !== user.id)
       return response.unauthorized("Acesso não permitido")
 
     const data = request.only(['username', 'password', 'email'])
