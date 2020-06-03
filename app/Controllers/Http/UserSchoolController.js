@@ -45,25 +45,15 @@ class UserSchoolController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
-    const { user_id, school_id } = request.post()
-    const user = await User.find(user_id)
-    const school = await School.find(school_id)
+    const { user_id, school_id_hash } = request.post()
+    const user = await User.findOrFail(user_id)
+    const school = await School.findByOrFail('id_hash', school_id_hash)
 
-    if (!user)
-      return response.status(404).json({
-        message: 'User not found!'
-      })
+    const registration = await UserSchool.create({ user_id, school_id: school.id })
 
-    if (!school)
-      return response.status(404).json({
-        message: 'School not found!'
-      })
-
-    const registration = await UserSchool.create({ user_id, school_id })
-
-    response.status(201).json({
+    return response.status(201).json({
       success: true,
-      message: `Successfully registered user ${user.username} to ${school.social_reason}.`,
+      message: `Vínculo de ${user.username} em ${school.social_reason} processado com sucesso.`,
       data: registration
     })
   }
@@ -78,6 +68,23 @@ class UserSchoolController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
+    const school = await School.findByOrFail('id_hash', params.schoolIdHash)
+
+    let relationships = await UserSchool
+      .query('user_id')
+      .where('school_id', school.id)
+      .fetch()
+
+    const users = await Promise.all(relationships.rows.map(async relation => {
+      let usr = await User.findOrFail(relation.user_id)
+      let roles = await usr.getRoles()
+      return { ...usr.$attributes, type: roles.length ? roles[0] && roles[0] : 'guest' }
+    }))
+
+    return {
+      school,
+      users
+    }
   }
 
   /**
