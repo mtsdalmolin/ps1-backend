@@ -3,6 +3,7 @@
 const User = use('App/Models/User')
 const School = use('App/Models/School')
 const UserSchool = use('App/Models/UserSchool')
+const Address = use('App/Models/Address')
 
 class SessionController {
   async create ({ auth, request, response }) { 
@@ -23,6 +24,7 @@ class SessionController {
     } else {
       if (userSchool) {
         school = await School.find(userSchool.school_id)
+        school.address = await Address.findBy('school_id', school.$attributes.id)
       }
       token = await auth.attempt(email, password)
     }
