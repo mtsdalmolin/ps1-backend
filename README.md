@@ -16,6 +16,7 @@ API Rests repo of the project developed in the software design subject
 | /schools/:id | HEAD,GET  | SchoolController.show    | auth,is:(admin) | schools.show    |
 | /schools/:id | PUT,PATCH | SchoolController.update  | auth,is:(admin) | schools.update  |
 | /schools/:id | DELETE    | SchoolController.destroy | auth,is:(admin) | schools.destroy |
+| /user_schools | POST     | SchoolController.destroy | auth            | schools.store   |
 | /classrooms  | HEAD,GET  | ClassroomController.index      |  auth,is:(admin)   | classrooms.index  |
 | /classrooms  | POST      | ClassroomController.store      |  auth,is:(admin)   | classrooms.store  |
 | /classrooms/:id | HEAD,GET  | ClassroomController.show    |  auth,is:(admin)   | classrooms.show  |
