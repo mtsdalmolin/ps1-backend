@@ -4,7 +4,7 @@ const User = use('App/Models/User')
 
 class SessionController {
   async create ({ request, auth }) { 
-    const { email, password, type } = request.all()
+    const { email, password } = request.all()
     const user = await User.findByOrFail('email', email)
     const userRoles = await user.getRoles()
     
@@ -15,7 +15,7 @@ class SessionController {
       token = await auth.attempt(email, password)
     }
 
-    return token
+    return { user, token }
   }
 }
 
