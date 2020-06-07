@@ -39,12 +39,13 @@ Route.group(() => {
   Route.get('/user_schools', 'UserSchoolController.index')
 
   Route.get('/schools/:schoolIdHash/classrooms', 'ClassroomController.index')
-
+  
   // Rota cadastro de ticket
   Route.resource('/schools/:schoolIdHash/classrooms/:classroomSlug/tickets', 'TicketController')
-    .apiOnly()
-    .except(['destroy', 'update'])
-
+  .apiOnly()
+  .except(['destroy', 'update'])
+  
+  Route.get('/schools/:schoolIdHash/tickets', 'TicketController.index')
 }).middleware(['auth'])
 
 // Rotas autenticadas apenas para admin
@@ -65,8 +66,6 @@ Route.group(() => {
 
   Route.put(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.update')
   Route.delete(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.destroy')
-
-  Route.get(':schoolIdHash/tickets', 'TicketController.index')
 
   // TODO: Fazer CRUD individual das rotas
   Route.resource(':schoolIdHash/addresses', 'AddressController')
