@@ -5,9 +5,9 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Classroom = use('App/Models/Classroom')
-const Photo = use('App/Models/Photo')
-const User = use('App/Models/User')
 const Ticket = use('App/Models/Ticket')
+const Database = use('Database')
+const Helpers = use('Helpers')
 
 /**
  * Resourceful controller for interacting with tickets
@@ -23,7 +23,9 @@ class TicketController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const tickets = Property.all()
+    const tickets = await Ticket.query()
+      .with('photos')
+      .fetch()
 
     return tickets
   }
@@ -36,41 +38,55 @@ class TicketController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
-    const { id, classroom_id, user_id, path, title, description } = request.post()
-    const classroom = await Classroom.find(classroom_id)
-    const user = await User.find(user_id)
+  async store ({ auth, params, request, response }) {
+    const {
+      title,
+      description,
+    } = request.all()
 
-    if (!classroom)
-      return response.status(404).json({
-        message: 'Classroom not found!'
-      })
-    if (!user)
-      return response.status(404).json({
-        message: 'User not found!'
-      })
+    const photos = request.file('photo', {
+      types: ['image']
+    })
 
+    const classroom = await Classroom.findByOrFail('slug', params.classroomSlug)
+
+    const trx = await Database.beginTransaction()
     try {
-      const photo = await Photo.create({ id, path })
-      const ticket = await Ticket.create({ id, classroom_id, user_id, photo_id: photo.id, title, description })
+      const ticket = await Ticket.create({
+        classroom_id: classroom.id,
+        user_id: auth.user.id,
+        title,
+        description
+      }, trx)
+
+      await photos.moveAll(Helpers.tmpPath('uploads'), file => ({
+        name: `${Date.now()}-${file.clientName}`
+      }))
+
+      if (!photos.movedAll()) {
+        return photos.errors()
+      }
+
+      await Promise.all(
+        photos
+          .movedList()
+          .map(photo => ticket.photos().create({ path: photo.fileName }, trx))
+      )
+
+      trx.commit()
 
       return response.json({
         success: true,
         data: { 
-          photo: { 
-            ...photo.$attributes 
-          },
-          ticket: {
-            ...ticket.$attributes
-          }
+          ticket,
+          photos
         },
         message: 'Ticket criado com sucesso.'
       })
-
-    } catch(e) {
-      return response.badRequest('Ocorreu um erro ao registrar o Ticket.')
+    } catch(error) {
+      trx.rollback()
+      return response.badRequest(`Erro: ${error.name}\nMensagem: ${error.message}`)
     }
-
   }
 
   /**
@@ -83,7 +99,10 @@ class TicketController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const ticket = await Ticket.findOrFail(params.id)
+    const ticket = await Ticket.query()
+      .with('photos')
+      .where('id', params.id)
+      .fetch()
 
     return ticket
   }
@@ -98,14 +117,7 @@ class TicketController {
    */
   async update ({ params, request, response }) {
     const ticket = await Ticket.findOrFail(params.id)
-    const data = request.only (['classroom_id', 'title', 'description'])
-    
-    const classroom = await Classroom.find(data.classroom_id)
-
-    if (!classroom)
-      return response.status(404).json({
-        message: 'Classroom not found!'
-      })
+    const data = request.only(['title', 'description'])
 
     ticket.merge(data)
     await ticket.save()
