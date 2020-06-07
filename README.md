@@ -17,11 +17,7 @@ API Rests repo of the project developed in the software design subject
 | /schools/:id | PUT,PATCH | SchoolController.update  | auth,is:(admin) | schools.update  |
 | /schools/:id | DELETE    | SchoolController.destroy | auth,is:(admin) | schools.destroy |
 | /user_schools | POST     | SchoolController.destroy | auth            | schools.store   |
-| /classrooms  | HEAD,GET  | ClassroomController.index      |  auth,is:(admin)   | classrooms.index  |
-| /classrooms  | POST      | ClassroomController.store      |  auth,is:(admin)   | classrooms.store  |
-| /classrooms/:id | HEAD,GET  | ClassroomController.show    |  auth,is:(admin)   | classrooms.show  |
-| /classrooms/:id | PUT,PATCH | ClassroomController.update  |  auth,is:(admin)   | classrooms.update  |
-| /classrooms/:id | DELETE    | ClassroomController.destroy |  auth,is:(admin)   | classrooms.destroy  |
+| /photos/:path | HEAD,GET | PhotoController.show     | auth            | /photos/:path   |
 | /schools/:schoolIdHash/classrooms | HEAD,GET  | ClassroomController.index | auth | /schools/:schoolIdHash/classrooms |
 | /schools/:schoolIdHash/classrooms | POST      | ClassroomController.store | auth,is:(admin) | :schoolIdHash/classrooms.store |
 | /schools/:schoolIdHash/classrooms/:id | HEAD,GET  | ClassroomController.show | auth,is:(admin) | :schoolIdHash/classrooms.show |
