@@ -66,6 +66,8 @@ Route.group(() => {
   Route.put(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.update')
   Route.delete(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.destroy')
 
+  Route.get(':schoolIdHash/tickets', 'TicketController.index')
+
   // TODO: Fazer CRUD individual das rotas
   Route.resource(':schoolIdHash/addresses', 'AddressController')
     .apiOnly()

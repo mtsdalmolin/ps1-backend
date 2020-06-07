@@ -12,7 +12,6 @@ class Classroom extends Model {
     tickets (){
         return this
           .hasMany('App/Models/Ticket')
-          .pivotTable('tickets')
     }
 }
 
