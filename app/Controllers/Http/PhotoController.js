@@ -4,6 +4,8 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Helpers = use('Helpers')
+
 /**
  * Resourceful controller for interacting with photos
  */
@@ -53,6 +55,7 @@ class PhotoController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
+    return response.download(Helpers.tmpPath(`uploads/${params.path}`))
   }
 
   /**
