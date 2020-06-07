@@ -5,9 +5,7 @@ const Model = use('Model')
 
 class Photo extends Model {
     tickets () {
-        return this
-            .belongsTo('App/Models/Ticket')
-            .pivotTable('tickets')
+        return this.belongsTo('App/Models/Ticket')
     }
 }
 

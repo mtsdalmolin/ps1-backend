@@ -15,8 +15,7 @@ class School extends Model {
   }
 
   classrooms () {
-    return this
-      .hasMany('App/Models/Classroom')
+    return this.hasMany('App/Models/Classroom')
   }
 }
 

@@ -14,7 +14,7 @@ class Ticket extends Model {
     }
     photos () {
         return this
-          .belongsTo('App/Models/Photo')
+          .hasMany('App/Models/Photo')
     }
 }
 
