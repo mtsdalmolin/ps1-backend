@@ -4,6 +4,8 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Address = use('App/Models/Address')
+
 /**
  * Resourceful controller for interacting with addresses
  */
@@ -41,6 +43,21 @@ class AddressController {
    * @param {Response} ctx.response
    */
   async store ({ request, response }) {
+    const data = request.only(['street', 'number', 'complement'])
+
+    try {
+      const address = await Address.create({ ...data, school_id: school.id })
+      
+      return response.json({
+        success: true,
+        data: {
+          address
+        },
+        message: 'Endereço criado com sucesso.'
+      })
+    } catch (error) {
+      return response.badRequest('Ocorreu um erro ao cadastrar um endereço.')
+    }
   }
 
   /**
@@ -76,6 +93,15 @@ class AddressController {
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
+    const address = await Address.findOrFail(params.id)
+    const data = request.only(['street', 'number', 'complement'])
+    address.merge(data)
+    await address.save()
+    return response.json({
+      success: true,
+      data: address,
+      message: 'Endereço atualizado com sucesso.'
+    })
   }
 
   /**
@@ -87,6 +113,15 @@ class AddressController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
+    const address = await Address.findOrFail(params.id)
+    try {
+      await address.delete()
+      return response.json({
+        message: 'Endereço removido com sucesso.'
+      })
+    } catch (e) {
+      return response.badRequest('Ocorreu um erro ao deletar o endereço.')
+    }
   }
 }
 
