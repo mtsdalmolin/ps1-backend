@@ -59,19 +59,21 @@ class TicketController {
         description
       }, trx)
 
-      await photos.moveAll(Helpers.tmpPath('uploads'), file => ({
-        name: `${Date.now()}-${file.clientName}`
-      }))
-
-      if (!photos.movedAll()) {
-        return photos.errors()
+      if (photos) {
+        await photos.moveAll(Helpers.tmpPath('uploads'), file => ({
+          name: `${Date.now()}-${file.clientName}`
+        }))
+  
+        if (!photos.movedAll()) {
+          return photos.errors()
+        }
+  
+        await Promise.all(
+          photos
+            .movedList()
+            .map(photo => ticket.photos().create({ path: photo.fileName }, trx))
+        )
       }
-
-      await Promise.all(
-        photos
-          .movedList()
-          .map(photo => ticket.photos().create({ path: photo.fileName }, trx))
-      )
 
       trx.commit()
 
