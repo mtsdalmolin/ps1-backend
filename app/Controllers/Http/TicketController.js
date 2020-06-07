@@ -22,9 +22,11 @@ class TicketController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index ({ params, request, response, view }) {
+    const classroom = await Classroom.findByOrFail('slug', params.classroomSlug)
     const tickets = await Ticket.query()
       .with('photos')
+      .where('classroom_id', classroom.id)
       .fetch()
 
     return tickets
