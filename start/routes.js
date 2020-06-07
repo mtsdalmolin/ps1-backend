@@ -33,18 +33,17 @@ Route.group(() => {
   // Edição de usuário
   Route.put('/users/:id', 'UserController.update')
 
-  // Rota cadastro de ticket
-  Route.post('/tickets/:userId', 'TicketController.store')
-  Route.get('/tickets/:userId', 'TicketController.index')
-  Route.get('/tickets/:userId/:ticketId', 'TicketController.show')
-  Route.put('/tickets/:userId/:ticketId', 'TicketController.update')
-
-  Route.post('/tickets/:userId/:ticketId/photos', 'PhotoController.store')
-  Route.get('/tickets/:userId/:ticketId/photos', 'PhotoController.show')
+  Route.get('/photos/:path', 'PhotoController.show')
 
   Route.post('/user_schools', 'UserSchoolController.store')
 
   Route.get('/schools/:schoolIdHash/classrooms', 'ClassroomController.index')
+
+  // Rota cadastro de ticket
+  Route.resource('/schools/:schoolIdHash/classrooms/:classroomSlug/tickets', 'TicketController')
+    .apiOnly()
+    .except(['destroy', 'update'])
+
 }).middleware(['auth'])
 
 // Rotas autenticadas apenas para admin
@@ -63,9 +62,12 @@ Route.group(() => {
     .apiOnly()
     .except(['index'])
 
+  Route.put(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.update')
+  Route.delete(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.destroy')
+
   // TODO: Fazer CRUD individual das rotas
   Route.resource(':schoolIdHash/addresses', 'AddressController')
-  .apiOnly()
+    .apiOnly()
     
   Route.get(':schoolIdHash/users', 'UserSchoolController.show')
 }).middleware(['auth', 'is:(admin)'])
