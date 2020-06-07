@@ -33,7 +33,7 @@ class UserController {
       return response.json(user)
     } catch (error) {
       await trx.rollback()
-      return response.badRequest('Ocorreu um erro ao realizar o cadastro.')
+      return response.badRequest(`Erro: ${error.name}\nMensagem: ${error.message}`)
     }
   }
 
