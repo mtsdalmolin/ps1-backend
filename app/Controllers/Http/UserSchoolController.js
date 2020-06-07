@@ -21,7 +21,13 @@ class UserSchoolController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async index ({ auth, request, response, view }) {
+    const relationship = await UserSchool.findBy('user_id', auth.user.id)
+
+    if (relationship)
+      return await School.find(relationship.school_id)
+    
+    return response.status(204).json()
   }
 
   /**
@@ -81,10 +87,7 @@ class UserSchoolController {
       return { ...usr.$attributes, type: roles.length ? roles[0] && roles[0] : 'guest' }
     }))
 
-    return {
-      school,
-      users
-    }
+    return users
   }
 
   /**

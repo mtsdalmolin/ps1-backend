@@ -36,6 +36,7 @@ Route.group(() => {
   Route.get('/photos/:path', 'PhotoController.show')
 
   Route.post('/user_schools', 'UserSchoolController.store')
+  Route.get('/user_schools', 'UserSchoolController.index')
 
   Route.get('/schools/:schoolIdHash/classrooms', 'ClassroomController.index')
 
