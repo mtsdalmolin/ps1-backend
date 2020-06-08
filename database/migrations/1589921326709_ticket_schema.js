@@ -25,6 +25,7 @@ class TicketSchema extends Schema {
         .onDelete('CASCADE')
       table.string('title').notNullable()
       table.string('description').notNullable()
+      table.string('situation').notNullable()
       table.timestamps()
     })
   }

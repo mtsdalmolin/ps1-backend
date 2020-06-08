@@ -24,6 +24,7 @@ Route.get('/', () => {
 })
 
 Route.post('/sessions', 'SessionController.create')
+Route.post('/historics/:ticket_id', 'HistoricController.store')
 
 // Rota de cadastro de usuário
 Route.post('/users', 'UserController.store')

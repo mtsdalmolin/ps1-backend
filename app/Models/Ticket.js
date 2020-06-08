@@ -4,18 +4,23 @@
 const Model = use('Model')
 
 class Ticket extends Model {
-    classrooms () {
-        return this
-          .belongsTo('App/Models/Classroom')
-    }
-    users () {
-        return this
-          .belongsTo('App/Models/User')
-    }
-    photos () {
-        return this
-          .hasMany('App/Models/Photo')
-    }
+  classrooms () {
+      return this
+        .belongsTo('App/Models/Classroom')
+  }
+  users () {
+    return this
+      .belongsTo('App/Models/User')
+  }
+  photos () {
+      return this
+        .hasMany('App/Models/Photo')
+  }
+  historics () {
+    return this
+      .belongsToMany('App/Models/Historic')
+      .pivotTable('historics')
+  }
 }
 
 module.exports = Ticket
