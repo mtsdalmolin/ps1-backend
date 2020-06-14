@@ -8,7 +8,7 @@ const Classroom = use('App/Models/Classroom')
 const Ticket = use('App/Models/Ticket')
 const School = use('App/Models/School')
 const Database = use('Database')
-const Helpers = use('Helpers')
+const Drive = use('Drive')
 
 /**
  * Resourceful controller for interacting with tickets
@@ -55,55 +55,61 @@ class TicketController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ auth, params, request, response }) {
-    const {
-      title,
-      description,
-    } = request.all()
-
-    const photos = request.file('photo', {
-      types: ['image']
-    })
-
+  async store ({ auth, params, request, response }) {    
+    const body = {}
+    const photos_url = []
     const classroom = await Classroom.findByOrFail('slug', params.classroomSlug)
 
     const trx = await Database.beginTransaction()
     try {
+      await request.multipart.field((name, value) => {
+        body[name] = value
+      })
+
+      await request.multipart.file('photo', { types: ['image'] }, async photo => {
+        const key = `${Date.now()}-${photo.clientName}`
+        const url = await Drive.put(key, photo.stream, {
+          ContentType: photo.headers['content-type'],
+          ACL: 'public-read'
+        })
+        
+        photos_url.push({ url, key })
+      }).process()
+
       const ticket = await Ticket.create({
         classroom_id: classroom.id,
         user_id: auth.user.id,
-        title,
-        description
+        title: body.title,
+        description: body.description
       }, trx)
 
-      if (photos) {
-        await photos.moveAll(Helpers.tmpPath('uploads'), file => ({
-          name: `${Date.now()}-${file.clientName}`
-        }))
-  
-        if (!photos.movedAll()) {
-          return photos.errors()
-        }
-  
-        await Promise.all(
-          photos
-            .movedList()
-            .map(photo => ticket.photos().create({ path: photo.fileName }, trx))
-        )
-      }
+      await Promise.all(
+        photos_url.map(photo => ticket.photos().create({ path: photo.key }, trx))
+      )
 
-      trx.commit()
+      await trx.commit()
+
+      const photos = await ticket.photos().fetch()
 
       return response.json({
         success: true,
-        data: { 
+        data: {
           ticket,
-          photos
+          photos,
         },
         message: 'Ticket criado com sucesso.'
       })
     } catch(error) {
       trx.rollback()
+      
+      await Promise.all(
+        photos_url.map(photo => {
+          const exists = Drive.exists(photo.key)
+          if (exists)
+            Drive.delete(photo.key)
+        })
+      )
+      
       return response.badRequest(`Erro: ${error.name}\nMensagem: ${error.message}`)
     }
   }
@@ -154,8 +160,22 @@ class TicketController {
    */
   async destroy ({ params, request, response }) {
     const ticket = await Ticket.findOrFail(params.id)
+    const photos = await ticket.photos().fetch()
 
-    await ticket.delete()
+    try {
+      Promise.all(
+        photos.rows.map(photo => Drive.delete(photo.path))
+      )
+  
+      await ticket.delete()
+
+      return response.status(200).json({
+        success: true,
+        message: 'Ticket deletado com sucesso.'
+      })
+    } catch (error) {
+      return response.badRequest(`Erro: ${error.name}\nMensagem: ${error.message}`)
+    }
   }
 }
 

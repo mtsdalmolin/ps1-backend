@@ -29,6 +29,9 @@ Route.post('/historics/:ticket_id', 'HistoricController.store')
 // Rota de cadastro de usuário
 Route.post('/users', 'UserController.store')
 
+Route.resource('/photos', 'PhotoController')
+  .apiOnly()
+
 // Rotas autenticadas para o usuário e/ou admin
 Route.group(() => {
   // Edição de usuário
@@ -43,8 +46,8 @@ Route.group(() => {
   
   // Rota cadastro de ticket
   Route.resource('/schools/:schoolIdHash/classrooms/:classroomSlug/tickets', 'TicketController')
-  .apiOnly()
-  .except(['destroy', 'update'])
+    .apiOnly()
+    .except(['destroy', 'update'])
   
   Route.get('/schools/:schoolIdHash/tickets', 'TicketController.index')
 }).middleware(['auth'])
