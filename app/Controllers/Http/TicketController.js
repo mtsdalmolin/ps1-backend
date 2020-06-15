@@ -84,7 +84,7 @@ class TicketController {
       }, trx)
 
       await Promise.all(
-        photos_url.map(photo => ticket.photos().create({ path: photo.key }, trx))
+        photos_url.map(photo => ticket.photos().create({ path: photo.key, url:photo.url }, trx))
       )
 
       await trx.commit()
