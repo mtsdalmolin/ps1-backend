@@ -10,6 +10,11 @@ class DropColumnSituationSchema extends Schema {
     })
   }
 
+  down () {
+    this.table('tickets', (table) => {
+      table.string('situation').notNullable()
+    })
+  }
 }
 
 module.exports = DropColumnSituationSchema

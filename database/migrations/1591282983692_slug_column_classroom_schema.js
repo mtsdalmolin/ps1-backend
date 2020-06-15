@@ -10,6 +10,12 @@ class SlugColumnClassroomSchema extends Schema {
       table.string('slug').notNullable()
     })
   }
+
+  down () {
+    this.table('classrooms', (table) => {
+      table.dropColumn('slug')
+    })
+  }
 }
 
 module.exports = SlugColumnClassroomSchema
