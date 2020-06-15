@@ -44,12 +44,20 @@ class TicketController {
 
     await School.findByOrFail('id_hash', params.schoolIdHash)
 
-    return await Database.select('tickets.*', 'classrooms.identifier', 'classrooms.slug')
+    const tickets = await Database.select('tickets.*', 'classrooms.identifier', 'classrooms.slug')
       .from('tickets')
       .join('classrooms', 'classrooms.id', 'tickets.classroom_id')
       .join('schools', 'schools.id', 'classrooms.school_id')
       .where('schools.id_hash', params.schoolIdHash)
       .orderBy('created_at', 'desc')
+
+    
+    return Promise.all(
+      tickets.map(async ticket => {
+        const photos = await Database.select('url').from('photos').where('photos.ticket_id', ticket.id)
+        return { ...ticket, photos }
+      })
+    )
   }
 
   /**
