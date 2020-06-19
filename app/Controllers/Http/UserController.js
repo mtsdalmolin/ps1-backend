@@ -48,7 +48,7 @@ class UserController {
     let roles = await auth.user.getRoles()
 
     if (roles[0] !== 'admin' && auth.user.id !== user.id)
-      return response.unauthorized("Acesso não permitido")
+      return response.unauthorized('Acesso negado')
 
     const data = request.only(['username', 'password', 'email'])
     user.merge(data)
