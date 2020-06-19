@@ -4,6 +4,7 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const Classroom = use('App/Models/Classroom')
 const Historic = use('App/Models/Historic')
 const Ticket = use('App/Models/Ticket')
 const Database = use('Database')
@@ -21,10 +22,10 @@ class HistoricController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const historics = await Historic.all()
-    
-    return historics;
+  async index ({ params, request, response, view }) {
+    const ticket = await Ticket.findOrFail(params.ticketId)
+
+    return await ticket.historics().fetch()
   }
   
   /**
@@ -36,33 +37,21 @@ class HistoricController {
    * @param {Response} ctx.response
    */
   async store ({ request, params, response }) {
-    const {
-      description,
-      situation,
-    } = request.all()
+    const { description, situation } = request.post()
     
-    const ticket = await Ticket.findByOrFail('id', params.ticket_id)
-
-    const trx = await Database.beginTransaction()
-    
+    const ticket = await Ticket.findOrFail(params.ticketId)
+ 
     try {
-      const historic = await Historic.create({
-        description,
-        situation,
-        ticket_id: ticket.id
-      }, trx)
-  
-      trx.commit()
+      const historic = await ticket.historics().create({ description, situation })
 
       return response.json({
         success: true,
         data: { 
           historic
         },
-        message: 'Historico criado com sucesso.'
+        message: 'Historico criado com sucesso'
       })
     } catch(error) {
-      trx.rollback()
       return response.badRequest(`Erro: ${error.name}\nMensagem: ${error.message}`)
     }
   }
@@ -77,9 +66,6 @@ class HistoricController {
    * @param {View} ctx.view
    */
   async show ({ params, request, response, view }) {
-    const historic = await Historic.findOrFail(params.id)
-
-    return historic
   }
 
   /**
@@ -90,12 +76,16 @@ class HistoricController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
-    const historic = await Historic.findOrFail(params.id);
-    const data = request.only(["description", "situation"]);
-    
-    historic.merge(data);
-    await historic.save();
+  async update ({ auth, params, request, response }) {
+    const historic = await Historic.findOrFail(params.id)
+    const data = request.only(["description", "situation"])
+
+    try {
+      historic.merge(data)
+      await historic.save()
+    } catch (error) {
+      return response.badRequest(`Erro: ${error.name}\nMensagem: ${error.message}`)
+    }
     
     return historic
   }
@@ -109,8 +99,8 @@ class HistoricController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
-    const historic = await Historic.findOrFail(params.id);
-    await historic.delete();
+    const historic = await Historic.findOrFail(params.id)
+    await historic.delete()
   }
 }
 
