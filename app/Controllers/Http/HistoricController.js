@@ -76,7 +76,7 @@ class HistoricController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ auth, params, request, response }) {
+  async update ({ params, request, response }) {
     const historic = await Historic.findOrFail(params.id)
     const data = request.only(["description", "situation"])
 
