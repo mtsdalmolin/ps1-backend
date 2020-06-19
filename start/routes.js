@@ -24,7 +24,6 @@ Route.get('/', () => {
 })
 
 Route.post('/sessions', 'SessionController.create')
-Route.post('/historics/:ticket_id', 'HistoricController.store')
 
 // Rota de cadastro de usuário
 Route.post('/users', 'UserController.store')
@@ -43,7 +42,7 @@ Route.group(() => {
   Route.get('/user_schools', 'UserSchoolController.index')
 
   Route.get('/schools/:schoolIdHash/classrooms', 'ClassroomController.index')
-  
+
   // Rota cadastro de ticket
   Route.resource('/schools/:schoolIdHash/classrooms/:classroomSlug/tickets', 'TicketController')
     .apiOnly()
@@ -56,7 +55,7 @@ Route.group(() => {
 Route.group(() => {
   Route.resource('users', 'UserController')
     .apiOnly()
-    .except(['store']),
+    .except(['store'])
   
   Route.resource('schools', 'SchoolController')
     .apiOnly()
@@ -64,17 +63,21 @@ Route.group(() => {
 
 // Rotas filhas de escolas, pois é mais fácil relacionar as rotas dessa forma
 Route.group(() => {
-  Route.resource(':schoolIdHash/classrooms', 'ClassroomController')
+  Route.resource('/classrooms', 'ClassroomController')
     .apiOnly()
     .except(['index'])
 
-  Route.put(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.update')
-  Route.delete(':schoolIdHash/classrooms/:classroomSlug/tickets/:id', 'TicketController.destroy')
+  Route.put('/classrooms/:classroomSlug/tickets/:id', 'TicketController.update')
+  Route.delete('/classrooms/:classroomSlug/tickets/:id', 'TicketController.destroy')
+
+  Route.resource('/classrooms/:classroomSlug/tickets/:ticketId/history', 'HistoricController')
+    .apiOnly()
+    .except(['show'])
 
   // TODO: Fazer CRUD individual das rotas
-  Route.resource(':schoolIdHash/addresses', 'AddressController')
+  Route.resource('/addresses', 'AddressController')
     .apiOnly()
     
-  Route.get(':schoolIdHash/users', 'UserSchoolController.show')
+  Route.get('/users', 'UserSchoolController.show')
 }).middleware(['auth', 'is:(admin)'])
-  .prefix('schools')
+  .prefix('schools/:schoolIdHash')
