@@ -4,11 +4,11 @@
 const Model = use('Model')
 
 class Ticket extends Model {
-  classrooms () {
+  classroom () {
     return this.belongsTo('App/Models/Classroom')
   }
 
-  users () {
+  user () {
     return this.belongsTo('App/Models/User')
   }
   
