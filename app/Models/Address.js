@@ -4,9 +4,9 @@
 const Model = use('Model')
 
 class Address extends Model {
-    school() {
-        return this.belongsTo('App/Models/School')
-    }
+  school() {
+    return this.belongsTo('App/Models/School')
+  }
 }
 
 module.exports = Address

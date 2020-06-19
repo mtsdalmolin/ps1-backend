@@ -50,7 +50,6 @@ class TicketController {
       .join('schools', 'schools.id', 'classrooms.school_id')
       .where('schools.id_hash', params.schoolIdHash)
       .orderBy('created_at', 'desc')
-
     
     return Promise.all(
       tickets.map(async ticket => {
