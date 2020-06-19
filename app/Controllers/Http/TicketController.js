@@ -99,15 +99,28 @@ class TicketController {
         photos_url.map(photo => ticket.photos().create({ path: photo.key, url:photo.url }, trx))
       )
 
+      await ticket.historics().create({
+        situation: 'Aguardando aceitação',
+        description: 'Seu ticket foi processado e aguarda aceitação da sua diretoria! Caso seja realmente um problema, o diretor da sua escola deverá aceitar.',
+      }, trx)
+
       await trx.commit()
 
-      const photos = await ticket.photos().fetch()
+      const user = await ticket.user().select('username', 'email').fetch()
+      const photos = await ticket.photos().select('url').fetch('url')
+      const historic = await ticket.historics().fetch()
 
       return response.json({
         success: true,
         data: {
-          ticket,
+          title: ticket.title,
+          description: ticket.description,
+          user,
+          classroom: {
+            identifier: classroom.identifier
+          },
           photos,
+          historic
         },
         message: 'Ticket criado com sucesso.'
       })
@@ -135,13 +148,21 @@ class TicketController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-    const ticket = await Ticket.query()
-      .with('photos')
-      .where('id', params.id)
-      .fetch()
+  async show ({ auth, params, request, response, view }) {
+    const user = await auth.getUser()
+    const [userRole] = await user.getRoles()
 
-    return ticket
+    const ticket = await Ticket.query()
+      .with('photos', (builder) => builder.select('ticket_id', 'path', 'url'))
+      .with('historics')
+      .with('user', (builder) => builder.select('id', 'username', 'email'))
+      .where('id', params.id)
+      .first()
+
+    if (userRole === 'admin' || ticket.user_id === auth.user.id)
+      return ticket
+
+    return response.unauthorized('Acesso não permitido')
   }
 
   /**
