@@ -44,8 +44,14 @@ class TicketController {
 
     await School.findByOrFail('id_hash', params.schoolIdHash)
 
-    const tickets = await Database.select('tickets.*', 'classrooms.identifier', 'classrooms.slug')
+    const tickets = await Database.select(
+        'tickets.*', 
+        'classrooms.identifier', 
+        'classrooms.slug',
+        'users.username AS ticket_owner'
+      )
       .from('tickets')
+      .join('users', 'users.id', 'tickets.user_id')
       .join('classrooms', 'classrooms.id', 'tickets.classroom_id')
       .join('schools', 'schools.id', 'classrooms.school_id')
       .where('schools.id_hash', params.schoolIdHash)
