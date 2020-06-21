@@ -28,6 +28,8 @@ class TicketController {
 
     const [userRoles] = await user.getRoles()
 
+    const { title, startDate, finishDate } = request.get()
+
     if (userRoles !== 'admin')
       return await Ticket.query()
         .with('photos')
@@ -55,7 +57,10 @@ class TicketController {
       .join('classrooms', 'classrooms.id', 'tickets.classroom_id')
       .join('schools', 'schools.id', 'classrooms.school_id')
       .where('schools.id_hash', params.schoolIdHash)
-      .orderBy('created_at', 'desc')
+      .andWhere('tickets.title', 'like', `%${title}%`)
+      .andWhere('tickets.created_at', '>=', startDate)
+      .andWhere('tickets.created_at', '<', finishDate)
+      .orderBy('tickets.created_at', 'desc')
     
     return Promise.all(
       tickets.map(async ticket => {
