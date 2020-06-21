@@ -48,7 +48,7 @@ class TicketController {
         'tickets.*', 
         'classrooms.identifier', 
         'classrooms.slug',
-        'users.username AS ticket_owner'
+        'users.username AS owner'
       )
       .from('tickets')
       .join('users', 'users.id', 'tickets.user_id')
