@@ -59,7 +59,7 @@ class TicketController {
       .where('schools.id_hash', params.schoolIdHash)
       .andWhere('tickets.title', 'like', `%${title}%`)
       .andWhere('tickets.created_at', '>=', startDate)
-      .andWhere('tickets.created_at', '<', finishDate)
+      .andWhere('tickets.created_at', '<=', finishDate)
       .orderBy('tickets.created_at', 'desc')
     
     return Promise.all(
