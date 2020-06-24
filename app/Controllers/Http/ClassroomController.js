@@ -22,12 +22,19 @@ class ClassroomController {
    * @param {View} ctx.view
    */
   async index ({ params, request, response, view }) {
+    const { withTickets } = request.get()
     const school = await School.findByOrFail('id_hash', params.schoolIdHash)
 
-    return await Classroom
-      .query()
-      .where('school_id', school.id)
-      .fetch()
+    return withTickets 
+      ? await Classroom
+        .query()
+        .with('tickets', builder => builder.select('title', 'description', 'classroom_id'))
+        .where('school_id', school.id)
+        .fetch()
+      : await Classroom
+        .query()
+        .where('school_id', school.id)
+        .fetch()
   }
 
   /**
