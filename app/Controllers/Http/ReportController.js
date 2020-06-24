@@ -1,7 +1,6 @@
 'use strict'
 
 const Ticket = use('App/Models/Ticket')
-const Historic = use('App/Models/Historic')
 const Database = use('Database')
 
 class ReportController {
@@ -64,11 +63,19 @@ class ReportController {
       .groupBy('historics.situation')
   }
 
-  async reportedTicketsByUser() {
+  async reportedTicketsByUser () {
     return await Ticket.query()
       .select(Database.raw('COUNT(*) as total, users.username'))
       .join('users', 'users.id', 'user_id')
       .groupBy('users.username')
+      .fetch()
+  }
+
+  async reportedTicketsByClassroom () {
+    return await Ticket.query()
+      .select(Database.raw('COUNT(*) as total, classrooms.identifier'))
+      .join('classrooms', 'classrooms.id', 'classroom_id')
+      .groupBy('classrooms.identifier')
       .fetch()
   }
 }
