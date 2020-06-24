@@ -7,6 +7,7 @@
 const User = use('App/Models/User')
 const School = use('App/Models/School')
 const UserSchool = use('App/Models/UserSchool')
+const Ticket = use('App/Models/Ticket')
 
 /**
  * Resourceful controller for interacting with userschools
@@ -76,18 +77,35 @@ class UserSchoolController {
   async show ({ params, request, response, view }) {
     const school = await School.findByOrFail('id_hash', params.schoolIdHash)
 
-    let relationships = await UserSchool
-      .query('user_id')
-      .where('school_id', school.id)
-      .fetch()
+    // let relationships = await UserSchool
+    //   .query('user_id')
+    //   .where('school_id', school.id)
+    //   .fetch()
 
-    const users = await Promise.all(relationships.rows.map(async relation => {
-      let usr = await User.findOrFail(relation.user_id)
-      let roles = await usr.getRoles()
-      return { ...usr.$attributes, type: roles.length ? roles[0] && roles[0] : 'guest' }
+    const users = await school.users().fetch()
+
+    // const users = await Promise.all(relationships.rows.map(async relation => {
+    //   let usr = await User.findOrFail(relation.user_id)
+    //   let roles = await usr.getRoles()
+    //   return { ...usr.$attributes, type: roles.length ? roles[0] && roles[0] : 'guest' }
+    // }))
+
+    // return users
+
+    return Promise.all(users.rows.map(async user => {
+      const [role] = await user.getRoles()
+      const tickets = await Ticket.query()
+        .where('user_id', user.id)
+        .select('tickets.title', 'tickets.description')
+        .fetch()
+
+      return { 
+        username: user.username,
+        email: user.email,
+        type: role ? role : 'guest',
+        tickets
+      }
     }))
-
-    return users
   }
 
   /**
