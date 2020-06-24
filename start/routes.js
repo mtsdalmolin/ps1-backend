@@ -79,5 +79,9 @@ Route.group(() => {
     .apiOnly()
     
   Route.get('/users', 'UserSchoolController.show')
+
+  Route.get('/reportedTickets', 'ReportController.reportedTickets')
+  Route.get('/reportedTicketsBySituation', 'ReportController.reportedTicketsBySituation')
+  Route.get('/reportedTicketsByUser', 'ReportController.reportedTicketsByUser')
 }).middleware(['auth', 'is:(admin)'])
   .prefix('schools/:schoolIdHash')
