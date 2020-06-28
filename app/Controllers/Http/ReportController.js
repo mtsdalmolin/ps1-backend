@@ -9,9 +9,10 @@ class ReportController {
 
     switch(mode) {
       case 'dates':
-        const dateExtraction = "CONCAT(EXTRACT(DAY FROM tickets.created_at), '/', EXTRACT(MONTH FROM tickets.created_at), '/', EXTRACT(YEAR FROM tickets.created_at))"
+        const dateExtraction = "DATE(CONCAT(EXTRACT(DAY FROM tickets.created_at), '/', EXTRACT(MONTH FROM tickets.created_at), '/', EXTRACT(YEAR FROM tickets.created_at)))"
         return await Ticket.query()
           .groupBy(Database.raw('date'))
+          .orderBy('date', 'ASC')
           .select(Database.raw(`
             COUNT(*) AS total,
             ${dateExtraction} as date
@@ -21,6 +22,7 @@ class ReportController {
         const weekExtraction = 'EXTRACT(WEEK FROM tickets.created_at)'
         return await Ticket.query()
           .groupBy(Database.raw('EXTRACT(WEEK FROM tickets.created_at)'))
+          .orderBy('week', 'ASC')
           .select(Database.raw(`
             COUNT(*) AS total,
             ${weekExtraction} as week
@@ -30,6 +32,7 @@ class ReportController {
         const monthExtraction = 'EXTRACT(MONTH FROM tickets.created_at)'
         return await Ticket.query()
           .groupBy(Database.raw('EXTRACT(MONTH FROM tickets.created_at)'))
+          .orderBy('month', 'ASC')
           .select(Database.raw(`
             COUNT(*) AS total,
             ${monthExtraction} as month
@@ -39,6 +42,7 @@ class ReportController {
         const yearExtraction = 'EXTRACT(YEAR FROM tickets.created_at)'
         return await Ticket.query()
           .groupBy(Database.raw('EXTRACT(YEAR FROM tickets.created_at)'))
+          .orderBy('week', 'ASC')
           .select(Database.raw(`
             COUNT(*) AS total,
             ${yearExtraction} as year
