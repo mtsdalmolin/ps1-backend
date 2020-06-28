@@ -9,7 +9,7 @@ class ReportController {
 
     switch(mode) {
       case 'dates':
-        const dateExtraction = "DATE(CONCAT(EXTRACT(DAY FROM tickets.created_at), '/', EXTRACT(MONTH FROM tickets.created_at), '/', EXTRACT(YEAR FROM tickets.created_at)))"
+        const dateExtraction = "DATE(CONCAT(EXTRACT(YEAR FROM tickets.created_at), '/', EXTRACT(MONTH FROM tickets.created_at), '/', EXTRACT(DAY FROM tickets.created_at)))"
         return await Ticket.query()
           .groupBy(Database.raw('date'))
           .orderBy('date', 'ASC')
