@@ -36,7 +36,7 @@ class HistoricController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
+  async store ({ params, request, response }) {
     const { description, situation } = request.post()
     
     const ticket = await Ticket.findOrFail(params.ticketId)
