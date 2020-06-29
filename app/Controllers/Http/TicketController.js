@@ -33,6 +33,7 @@ class TicketController {
     if (userRoles !== 'admin')
       return await Ticket.query()
         .with('photos')
+        .with('classroom', builder => builder.select('id', 'slug'))
         .where('user_id', user.id)
         .fetch()
         
