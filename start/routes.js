@@ -49,7 +49,7 @@ Route.group(() => {
     .except(['destroy', 'update'])
   
   Route.get('/schools/:schoolIdHash/tickets', 'TicketController.index')
-  Route.resource('/schools/:schoolIdHash/classrooms/:classroomSlug/tickets/:ticketId/history', 'HistoricController.index')
+  Route.get('/schools/:schoolIdHash/classrooms/:classroomSlug/tickets/:ticketId/history', 'HistoricController.index')
 }).middleware(['auth'])
 
 // Rotas autenticadas apenas para admin
