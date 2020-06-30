@@ -49,6 +49,7 @@ Route.group(() => {
     .except(['destroy', 'update'])
   
   Route.get('/schools/:schoolIdHash/tickets', 'TicketController.index')
+  Route.resource('/schools/:schoolIdHash/classrooms/:classroomSlug/tickets/:ticketId/history', 'HistoricController.index')
 }).middleware(['auth'])
 
 // Rotas autenticadas apenas para admin
@@ -72,7 +73,7 @@ Route.group(() => {
 
   Route.resource('/classrooms/:classroomSlug/tickets/:ticketId/history', 'HistoricController')
     .apiOnly()
-    .except(['show'])
+    .except(['index', 'show'])
 
   // TODO: Fazer CRUD individual das rotas
   Route.resource('/addresses', 'AddressController')
