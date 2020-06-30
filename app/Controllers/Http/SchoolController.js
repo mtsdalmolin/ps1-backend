@@ -149,7 +149,7 @@ class SchoolController {
       trx.commit()
 
       return response.json({
-        school, 
+        ...school.$attributes,
         address
       })
     } catch(e) {
