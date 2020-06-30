@@ -149,16 +149,8 @@ class SchoolController {
       trx.commit()
 
       return response.json({
-        success: true,
-        data: { 
-          school: { 
-            ...school.$attributes 
-          },
-          address: {
-            ...address.$attributes
-          }
-        },
-        message: 'Registro atualizado com sucesso.'
+        school, 
+        address
       })
     } catch(e) {
       return response.badRequest('Aconteceu um erro ao atualizar os dados.')
