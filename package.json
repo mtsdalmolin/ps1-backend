@@ -31,7 +31,7 @@
     "crypto-js": "^4.0.0",
     "pg": "^8.1.0",
     "slugify": "^1.4.0",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.5.9"
   },
   "devDependencies": {},
   "autoload": {
